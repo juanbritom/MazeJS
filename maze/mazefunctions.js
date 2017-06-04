@@ -1,4 +1,4 @@
-//xd
+//lul
 function createCells() {
   for (var j=0; j < rows; j++) {
     for (var i=0; i < cols; i++) {
