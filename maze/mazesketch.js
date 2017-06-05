@@ -1,11 +1,3 @@
-var w = 40; //tamanho da cell, wid*hei deve ser divisivel por w² (já tratado)
-var wid = 600;
-var hei = 600;
-var status = "create"; //create,solve
-var mode = "Anim";  //Anim,NoAnim
-var createAlg = "Prim"; //Prim,DFS,Recursive Division
-var solveAlg = "AStar"; //AStar,BFS
-var AStarHeuristic = "Euclidean"; //Euclidean, Manhattan
 var cols, rows;
 var totalcells = wid*hei/w/w;
 //ajusta wid e hei para caber cells de tamanho w
