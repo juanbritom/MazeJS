@@ -74,7 +74,20 @@ function draw() {
           current.markNeighAsFrontier();
           removeWalls(current,randomIncell);
           frontier.splice(indiceRfc,1);
-        }else{
+        }
+        else if (createAlg=="Aldous") {
+          remaining = totalcells - 1
+          while (remaining > 0) {
+            vizinho = current.retornaVizRandomico();
+              if(vizinho.visited == false){
+                remove.walls(current,vizinho);
+                vizinho.visited = true;
+                remaining -= -1;
+              }
+            current = vizinho;
+          }
+        }
+        else{
           current = grid[0];
           status = "solve";
         }
@@ -124,6 +137,7 @@ function draw() {
               vizinhos[i].attFValue();
             }
           }
+
         }else{
           mostrarCaminho(caminho);
         }
