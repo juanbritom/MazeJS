@@ -54,8 +54,10 @@ function AEstrela(inicio,fim) {
   while (openSet.length>0){
     idxMenorOpenSetScore = menorfScore(openSet);
     inicio = openSet[idxMenorOpenSetScore];
+    //inicio.partOffrontier = true;
     if(inicio == fim){
       return recon_path(inicio);
+      //openSet = [];
     }
     closedSet.push(inicio);
     openSet.splice(idxMenorOpenSetScore,1);

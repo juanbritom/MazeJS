@@ -1,5 +1,5 @@
 var cols, rows;
-var w = 2; //tamanho da cell, wid*hei deve ser divisivel por w²
+var w = 20; //tamanho da cell, wid*hei deve ser divisivel por w²
 var wid = 600;
 var hei = 600;
 var totalcells = wid*hei/w/w;
