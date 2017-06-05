@@ -14,6 +14,7 @@ function Cell(i, j) {
     this.aStarFValue = this.aStarHValue + this.aStarGValue;
   };
 
+  //retorna um vizinho randomico (cell)
   this.checkNeighbors = function() {
     var neighbors = [];
     var candidates = [];
@@ -86,6 +87,12 @@ function Cell(i, j) {
       candidates.push(grid[index(i-1  , j)]);
     }
     return candidates;
+  };
+
+  //retorna um vizinho randomico dentre todos vizinhos
+  this.retornaVizRandomico = function() {
+    var candidates = this.retornaTodosVizinhos();
+    return candidates[floor(random(0,candidates.length))];
   };
 
   this.randomInCell = function() {
