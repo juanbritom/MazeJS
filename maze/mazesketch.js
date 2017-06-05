@@ -13,8 +13,9 @@ var grid = [];
 //muitas dessas variáveis poderiam não ser globais, porém
 //seria perdida a possibilidade de animação step-by-step
 var status = "create"; //create,solve
-var createAlg = "Prim"; //Prim,DFS
-var solveAlg = "AStar";
+var createAlg = "Prim"; //Prim,DFS,Recursive Division
+var solveAlg = "BFS"; //AStar,BFS
+var AStarHeuristic = "Manhattan"; //Euclidean, Manhattan
 var first = true;
 //para DFS
 var current;
@@ -92,6 +93,7 @@ function draw() {
       openSet = [inicio];
       inicio.aStarGValue = 0;
       inicio.aStarFValue = HUEristic(inicio,fim);
+      disVisitdisFrontier(grid);
       fts = false;
     }
     if(solveAlg=="AStar"){
@@ -130,6 +132,30 @@ function draw() {
         mostrarCaminho(caminho);
       }
       //var caminho = AEstrela(current,end);
+    }else if(solveAlg=="BFS"){
+      fim.highlight();
+      if(openSet.length>0){
+        var c = openSet.pop();
+        c.visitedSolve = true;
+        c.highlight();
+        if(c==fim){
+          caminho = recon_path(c);
+          openSet = [];
+        }else{
+          var neigh = c.retornaTodosVizinhos();
+          for (i = 0; i<neigh.length; i++) {
+            if (!neigh[i].visitedSolve && isMovePossible(c,neigh[i])){
+              neigh[i].highlightPossible();
+              neigh[i].visitedSolve = true;
+              neigh[i].pai = c;
+              openSet.unshift(neigh[i]);
+            }
+          }
+          c.partOffrontier = true; //examined
+        }
+      }else{
+        mostrarCaminho(caminho);
+      }
     }
   }
 }

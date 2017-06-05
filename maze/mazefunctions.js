@@ -93,8 +93,12 @@ function recon_path(currentNode) {
   return path.reverse();
 }
 
-function HUEristic(inicio,fim){ //euclidean distance
-  return Math.sqrt((Math.pow((fim.i - inicio.i),2) + Math.pow((fim.j-inicio.j),2)));
+function HUEristic(inicio,fim){ //euclidean,Manhatttan distance
+  if(AStarHeuristic == "Euclidean"){
+    return Math.sqrt((Math.pow((fim.i - inicio.i),2) + Math.pow((fim.j-inicio.j),2)));
+  }else{
+    return ((Math.sqrt(Math.pow((fim.i - inicio.i),2)) + Math.sqrt(Math.pow((fim.j-inicio.j),2))));
+  }
 }
 
 function menorfScore(set){
@@ -138,4 +142,35 @@ function isMovePossible(a, b){
   }else{
     return false;
   }
+}
+
+function disVisitdisFrontier(set){
+  for(var i=0;i<set.length;i++){
+    set[i].visitedSolve = false;
+    set[i].partOffrontier = false;
+  }
+}
+//courses.cs.washington.edu/courses/cse326/03su/homework/hw3/bfs.html
+function doBFS(inicio,fim){
+  disVisitdisFrontier(grid);
+  var filinha = [inicio];
+  fim.highlight();
+  while(filinha.length>0){
+    var c = filinha.pop();
+    c.visitedSolve=true;
+    if(c==fim){
+      return recon_path(c);
+    }else{
+      var vizinhos = c.retornaTodosVizinhos();
+      for (var i = 0; i<vizinhos.length; i++) {
+        if (!vizinhos[i].visitedSolve && isMovePossible(c,vizinhos[i])){
+          vizinhos[i].visitedSolve = true;
+          vizinhos[i].pai = c;
+          filinha.unshift(vizinhos[i]);
+        }
+      }
+      c.partOffrontier = true; //examined
+    }
+  }
+  return [];
 }

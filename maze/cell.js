@@ -8,6 +8,7 @@ function Cell(i, j) {
   this.visited = false;
   this.partOffrontier = false;
   this.pai = undefined;
+  this.visitedSolve = false;
 
   this.attFValue = function () {
     this.aStarFValue = this.aStarHValue + this.aStarGValue;
@@ -160,7 +161,7 @@ function Cell(i, j) {
     var x = this.i*w;
     var y = this.j*w;
     noStroke();
-    fill(200,0,0,100);
+    fill(0,0,0,200);
     rect(x+1,y+1,w-1,w-1);
   };
 

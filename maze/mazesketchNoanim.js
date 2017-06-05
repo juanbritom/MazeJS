@@ -1,5 +1,5 @@
 var cols, rows;
-var w = 20; //tamanho da cell, wid*hei deve ser divisivel por w²
+var w = 2; //tamanho da cell, wid*hei deve ser divisivel por w²
 var wid = 600;
 var hei = 600;
 var totalcells = wid*hei/w/w;
@@ -14,7 +14,8 @@ var grid = [];
 //seria perdida a possibilidade de animação step-by-step
 var status = "create"; //create,solve
 var createAlg = "DFS"; //Prim,DFS
-var solveAlg = "AStar";
+var solveAlg = "BFS"; //AStar,BFS
+var AStarHeuristic = "Manhattan"; //Euclidean, Manhattan
 //para DFS
 var current;
 var stack = [];
@@ -98,6 +99,10 @@ function draw() {
       fim.highlight();
       caminho = AEstrela(inicio,fim);
       mostrarCaminho(caminho);
-      }
+    }else if(solveAlg == "BFS"){
+      fim.highlight();
+      caminho = doBFS(inicio,fim);
+      mostrarCaminho(caminho);
     }
+  }
 }
