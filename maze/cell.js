@@ -14,6 +14,10 @@ function Cell(i, j) {
     this.aStarFValue = this.aStarHValue + this.aStarGValue;
   };
 
+  this.attFValueGBS = function(){
+    this.aStarFValue = this.aStarHValue;
+  };
+
   //retorna um vizinho randomico (cell)
   this.checkNeighbors = function() {
     var neighbors = [];

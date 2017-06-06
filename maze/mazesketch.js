@@ -6,6 +6,7 @@ while (totalcells%2){
   hei+=1;
   var totalcells = wid*hei/w/w;
 }
+var remaining = totalcells - 1;
 var grid = [];
 //muitas dessas variáveis poderiam não ser globais, porém
 //seria perdida a possibilidade de animação step-by-step
@@ -74,25 +75,27 @@ function draw() {
           current.markNeighAsFrontier();
           removeWalls(current,randomIncell);
           frontier.splice(indiceRfc,1);
-        }
-        else if (createAlg=="Aldous") {
-          remaining = totalcells - 1
-          while (remaining > 0) {
-            vizinho = current.retornaVizRandomico();
-              if(vizinho.visited == false){
-                remove.walls(current,vizinho);
-                vizinho.visited = true;
-                remaining -= -1;
-              }
-            current = vizinho;
-          }
-        }
-        else{
+        }else{
           current = grid[0];
           status = "solve";
         }
-      }
-    }else{ //solve
+      }else if (createAlg=="Aldous") {
+          current.highlight();
+          if(remaining > 0) {
+            vizinho = current.retornaVizRandomico();
+              if(vizinho.visited === false){
+                removeWalls(current,vizinho);
+                vizinho.visited = true;
+                remaining -= 1;
+              }
+            current = vizinho;
+          }else{
+            current = grid[0];
+            status = "solve";
+          }
+        }
+    }
+    else{ //solve
       if(fts){ //first time solving
         fim = grid[(totalcells) - 1];
         fim.highlight();
@@ -100,6 +103,8 @@ function draw() {
         openSet = [inicio];
         inicio.aStarGValue = 0;
         inicio.aStarFValue = HUEristic(inicio,fim);
+        inicio.aStarHValue = HUEristic(inicio,fim);
+        inicio.visitedSolve = true;
         disVisitdisFrontier(grid);
         fts = false;
       }
@@ -122,7 +127,7 @@ function draw() {
               continue;
             }
             vizinhos[i].highlightPossible();
-            gScore = inicio.aStarGValue +1;
+            gScore = inicio.aStarGValue +3;
             var gScoreIsBest = false;
             if(!inArray(vizinhos[i],openSet)){
               gScoreIsBest = true;
@@ -132,6 +137,7 @@ function draw() {
               gScoreIsBest = true;
             }
             if(gScoreIsBest) {
+              vizinhos[i].partOffrontier = true;
               vizinhos[i].pai = inicio;
               vizinhos[i].aStarGValue = gScore;
               vizinhos[i].attFValue();
@@ -162,6 +168,45 @@ function draw() {
               }
             }
             c.partOffrontier = true; //examined
+          }
+        }else{
+          mostrarCaminho(caminho);
+        }
+      }else if(solveAlg == "GBFirst") {
+        fim.highlight();
+        if (openSet.length>0){
+          idxMenorOpenSetScore = menorhScore(openSet);
+          inicio = openSet[idxMenorOpenSetScore];
+          //inicio.partOffrontier = true;
+          if(inicio == fim){
+            caminho = recon_path(inicio);
+            openSet = [];
+          }
+          mostrarCaminho(recon_path(inicio));
+          closedSet.push(inicio);
+          openSet.splice(idxMenorOpenSetScore,1);
+          var kinjins = inicio.retornaTodosVizinhos();
+          for (i = 0; i<kinjins.length; i++) {
+            if (inicio == fim || inArray(kinjins[i],closedSet) || !isMovePossible(inicio,kinjins[i])){
+              continue;
+            }
+            kinjins[i].highlightPossible();
+            var hScore = inicio.aStarHValue;
+            var hScoreIsBest = false;
+            if(!inArray(kinjins[i],openSet) && hScore < kinjins[i].aStarHValue){
+              hScoreIsBest = true;
+              kinjins[i].aStarHValue = HUEristic(kinjins[i],fim);
+              openSet.push(kinjins[i]);
+            }
+            // else if(hScore < kinjins[i].aStarHValue) {
+            //   hScoreIsBest = true;
+            // }
+            if(hScoreIsBest) {
+              kinjins[i].partOffrontier = true;
+              kinjins[i].pai = inicio;
+              kinjins[i].aStarHValue = hScore;
+              kinjins[i].attFValueGBS();
+            }
           }
         }else{
           mostrarCaminho(caminho);
@@ -206,6 +251,19 @@ function draw() {
         }
         current = grid[0];
         status = "solve";
+      }else if (createAlg=="Aldous") {
+          current.highlight();
+          while(remaining > 0) {
+            vizinho = current.retornaVizRandomico();
+              if(vizinho.visited === false){
+                removeWalls(current,vizinho);
+                vizinho.visited = true;
+                remaining -= 1;
+              }
+            current = vizinho;
+          }
+          current = grid[0];
+          status = "solve";
       }
     }else{
       if(fts){ //first time solving

@@ -115,6 +115,18 @@ function menorfScore(set){
   return idx;
 }
 
+function menorhScore(set){
+  currentlow = Number.MAX_SAFE_INTEGER;
+  var idx;
+  for(var i=0;i<set.length;i++){
+    if (set[i].aStarHValue<currentlow){
+      currentlow = set.aStarHValue;
+      idx = i;
+    }
+  }
+  return idx;
+}
+
 function mostrarCaminho(caminho){
   for(i = 0; i<caminho.length; i++){
     caminho[i].highlightPath();
