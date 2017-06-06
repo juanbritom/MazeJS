@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <link rel = "shortcut icon" type = "image/x-icon" href = "favicon-96x96.png" />
+    <meta charset="UTF-8">
+    <title>Mazesketch</title>
+    <script src="libraries/p5.js" type="text/javascript"></script>
+    <script src="libraries/p5.dom.js" type="text/javascript"></script>
+    <script src="libraries/dat.gui.min.js" type="text/javascript"></script>
+    <script type = "text/javascript">
+
+    var w = 30; //tamanho da cell, wid*hei deve ser divisivel por w² (já tratado)
+    var wid = 600;
+    var hei = 600;
+    var status = "create"; //create,solve
+    var mode = "Anim";  //Anim,NoAnim
+    var createAlg = "Prim"; //Prim,DFS,Aldous
+    var solveAlg = "AStar"; //AStar,BFS, GBFirst
+    var AStarHeuristic = "Manhattan"; //Euclidean, Manhattan
+	var colorWalls = [0,0,0,255];
+	var colorPath = [0,0,30,150];
+	var colorFrontier = [255,255,255,150];
+	var colorPossible = [0,0,0,200];
+	var colorHighlight = [0,0,100,100];
+	var colorVisited = [0,140,40,100];
+
+    // Restart = function(){
+    //   location.reload();
+    // }
+    //
+    window.onload = function(){
+		var gui = new dat.GUI();
+    //   var f1 = gui.addFolder('Tamanho da Cell');
+    //   var f2 = gui.addFolder('Tamanho do Canvas mínimo');
+    //   var f3 = gui.addFolder('Algoritmos');
+    //   f1.add(window.top, 'w',2,wid/2);
+    //   f2.add(window.top, 'wid');
+    //   f2.add(window.top, 'hei');
+    //   f3.add(window.top, 'mode',['Anim','NoAnim']);
+    //   f3.add(window.top, 'createAlg',['Prim','DFS']);
+    //   f3.add(window.top, 'solveAlg',['AStar','BFS']);
+    //   f3.add(window.top, 'AStarHeuristic',['Euclidean','Manhattan']);
+    //   gui.add(window.top, 'Restart');
+		gui.addColor(window.top,'colorWalls');
+		gui.addColor(window.top,'colorVisited');
+		gui.addColor(window.top,'colorFrontier');
+		gui.addColor(window.top,'colorHighlight');
+		gui.addColor(window.top,'colorPath');
+		gui.addColor(window.top,'colorPossible');
+    }
+    </script>
+    <script src="cell.js" type="text/javascript"></script>
+    <script src="mazefunctions.js" type="text/javascript"></script>
+    <script src="mazesketch.js" type="text/javascript"></script>
+
+    <style> body {padding: 20px; margin: 0;} canvas {vertical-align: top;} </style>
+  </head>
+  <body>
+  </body>
+</html>
