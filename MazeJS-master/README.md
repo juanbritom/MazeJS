@@ -1,2 +1,0 @@
-# MazeJS
-xd

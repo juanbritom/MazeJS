@@ -133,7 +133,7 @@ function Cell(i, j) {
   this.show = function() {
     var x = this.i*w;
     var y = this.j*w;
-    stroke(255);
+    stroke(colorWalls);
     //de x, de y até esse x e esse y
     if (this.walls[0]) {
       line(x      ,y      ,x+w        ,y);        //topwall
@@ -150,12 +150,12 @@ function Cell(i, j) {
 
     if(this.visited) {
       noStroke();
-      fill(0,140,40,100);
+      fill(colorVisited);
       rect(x,y,w,w);
     }
     if(this.partOffrontier){
       noStroke();
-      fill(200,0,0,100);
+      fill(colorFrontier);
       rect(x,y,w,w);
     }
   };
@@ -164,7 +164,7 @@ function Cell(i, j) {
     var x = this.i*w;
     var y = this.j*w;
     noStroke();
-    fill(0,0,100,100);
+    fill(colorHighlight);
     rect(x+1,y+1,w-1,w-1);
   };
 
@@ -172,7 +172,7 @@ function Cell(i, j) {
     var x = this.i*w;
     var y = this.j*w;
     noStroke();
-    fill(0,0,0,200);
+    fill(colorPossible);
     rect(x+1,y+1,w-1,w-1);
   };
 
@@ -182,7 +182,7 @@ function Cell(i, j) {
     tam = floor(w/1.75);
     pos = [(x+w/2),(y+w/2)];
     noStroke();
-    fill(0,0,30,150);
+    fill(colorPath);
     ellipse(pos[0],pos[1],tam,tam);
   };
 }

@@ -26,7 +26,7 @@ var inicio;
 var fim;
 
 function setup() {
-  createCanvas(wid, hei);
+  createCanvas(wid+1, hei+1);
   cols = floor(width/w);
   rows = floor(height/w);
   createCells();
@@ -36,7 +36,7 @@ function setup() {
 }
 
 function draw() {
-  background(51);
+  background(colorBackground);
   for (var i = 0; i<grid.length; i++) {
     grid[i].show();
   }
@@ -113,6 +113,7 @@ function draw() {
         if (openSet.length>0){
           idxMenorOpenSetScore = menorfScore(openSet);
           inicio = openSet[idxMenorOpenSetScore];
+          inicio.partOffrontier = false;
           //inicio.partOffrontier = true;
           if(inicio == fim){
             caminho = recon_path(inicio);
@@ -127,7 +128,7 @@ function draw() {
               continue;
             }
             vizinhos[i].highlightPossible();
-            gScore = inicio.aStarGValue +3;
+            gScore = inicio.aStarGValue + 1;
             var gScoreIsBest = false;
             if(!inArray(vizinhos[i],openSet)){
               gScoreIsBest = true;
@@ -153,6 +154,7 @@ function draw() {
         if(openSet.length>0){
           var c = openSet.pop();
           c.visitedSolve = true;
+          c.partOffrontier = false;
           c.highlight();
           if(c==fim){
             caminho = recon_path(c);
@@ -164,10 +166,11 @@ function draw() {
                 neigh[i].highlightPossible();
                 neigh[i].visitedSolve = true;
                 neigh[i].pai = c;
+                neigh[i].partOffrontier = true;
                 openSet.unshift(neigh[i]);
               }
             }
-            c.partOffrontier = true; //examined
+            //c.partOffrontier = true; //examined
           }
         }else{
           mostrarCaminho(caminho);
@@ -177,6 +180,7 @@ function draw() {
         if (openSet.length>0){
           idxMenorOpenSetScore = menorhScore(openSet);
           inicio = openSet[idxMenorOpenSetScore];
+          inicio.partOffrontier = false;
           //inicio.partOffrontier = true;
           if(inicio == fim){
             caminho = recon_path(inicio);
@@ -284,6 +288,10 @@ function draw() {
         fim.highlight();
         caminho = doBFS(inicio,fim);
         mostrarCaminho(caminho);
+      }else if(solveAlg == "GBFirst") {
+        fim.highlight();
+        caminho = doGBFirst(inicio,fim);
+		mostrarCaminho(caminho);
       }
     }
   }

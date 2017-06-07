@@ -46,6 +46,45 @@ function removeWalls(a, b) {
   }
 }
 
+function doGBFirst(inicio,fim){
+        fim.highlight();
+        while (openSet.length>0){
+          idxMenorOpenSetScore = menorhScore(openSet);
+          inicio = openSet[idxMenorOpenSetScore];
+          //inicio.partOffrontier = true;
+          if(inicio == fim){
+            caminho = recon_path(inicio);
+            return caminho;
+          }
+          mostrarCaminho(recon_path(inicio));
+          closedSet.push(inicio);
+          openSet.splice(idxMenorOpenSetScore,1);
+          var kinjins = inicio.retornaTodosVizinhos();
+          for (i = 0; i<kinjins.length; i++) {
+            if (inicio == fim || inArray(kinjins[i],closedSet) || !isMovePossible(inicio,kinjins[i])){
+              continue;
+            }
+            kinjins[i].highlightPossible();
+            var hScore = inicio.aStarHValue;
+            var hScoreIsBest = false;
+            if(!inArray(kinjins[i],openSet) && hScore < kinjins[i].aStarHValue){
+              hScoreIsBest = true;
+              kinjins[i].aStarHValue = HUEristic(kinjins[i],fim);
+              openSet.push(kinjins[i]);
+            }
+            // else if(hScore < kinjins[i].aStarHValue) {
+            //   hScoreIsBest = true;
+            // }
+            if(hScoreIsBest) {
+              kinjins[i].partOffrontier = true;
+              kinjins[i].pai = inicio;
+              kinjins[i].aStarHValue = hScore;
+              kinjins[i].attFValueGBS();
+            }
+          }
+        }
+}
+
 function AEstrela(inicio,fim) {
   var openSet = [inicio];
   var closedSet = [];
