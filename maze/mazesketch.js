@@ -11,7 +11,6 @@ var grid = [];
 //muitas dessas variáveis poderiam não ser globais, porém
 //seria perdida a possibilidade de animação step-by-step
 //para DFS
-var first = true;
 var current,next;
 var stack = [];
 //para Prim
@@ -24,15 +23,45 @@ var openSet = [];
 var closedSet = [];
 var inicio;
 var fim;
+var caminho =[];
 
 function setup() {
-  createCanvas(wid+1, hei+1);
-  cols = floor(width/w);
-  rows = floor(height/w);
+  if(isThereACanvas === true){
+    createCanvas(wid+1, hei+1);
+  }else{
+    noCanvas();
+  }
+  cols = floor(wid/w);
+  rows = floor(hei/w);
   createCells();
   current = grid[floor(random(0, grid.length))];
   current.visited = true;
   frameRate(144);
+  if(timesToCreate>0){
+    var createString = "";
+    var solveString = "";
+    while(timesToCreate>0){
+      noLoop();
+      createCells();
+      current = grid[floor(random(0, grid.length))];
+      current.visited = true;
+      draw();
+      createString +=creationMetrics();
+      if(solveMetrics===true){
+        solveString+=completeSolvingMetrics();
+      }
+      status = "create";
+      timesToCreate--;
+    }
+    console.log(createString);
+    if(solveMetrics===true){
+      console.log(solveString);
+    }
+  }else if(solveMetrics===true){
+    draw();
+    console.log(completeSolvingMetrics());
+  }
+  loop();
 }
 
 function draw() {
@@ -104,8 +133,8 @@ function draw() {
         inicio.aStarGValue = 0;
         inicio.aStarFValue = HUEristic(inicio,fim);
         inicio.aStarHValue = HUEristic(inicio,fim);
-        inicio.visitedSolve = true;
         disVisitdisFrontier(grid);
+        inicio.visitedSolve = true;
         fts = false;
       }
       if(solveAlg=="AStar"){
@@ -131,6 +160,7 @@ function draw() {
             gScore = inicio.aStarGValue + 1;
             var gScoreIsBest = false;
             if(!inArray(vizinhos[i],openSet)){
+              vizinhos[i].visitedSolve = true;
               gScoreIsBest = true;
               vizinhos[i].aStarHValue = HUEristic(vizinhos[i],fim);
               openSet.push(vizinhos[i]);
@@ -198,6 +228,7 @@ function draw() {
             var hScore = inicio.aStarHValue;
             var hScoreIsBest = false;
             if(!inArray(kinjins[i],openSet) && hScore < kinjins[i].aStarHValue){
+              kinjins[i].visitedSolve = true;
               hScoreIsBest = true;
               kinjins[i].aStarHValue = HUEristic(kinjins[i],fim);
               openSet.push(kinjins[i]);
@@ -271,13 +302,16 @@ function draw() {
       }
     }else{
       if(fts){ //first time solving
+        remaining = totalcells-1;
         fim = grid[(totalcells) - 1];
         fim.highlight();
-        inicio = current;
+        inicio = grid[0];
         openSet = [inicio];
         inicio.aStarGValue = 0;
+        inicio.aStarFValue = HUEristic(inicio,fim);
         inicio.aStarHValue = HUEristic(inicio,fim);
-        inicio.attFValue();
+        disVisitdisFrontier(grid);
+        inicio.visitedSolve = true;
         fts = false;
       }
       if(solveAlg=="AStar"){
@@ -291,7 +325,7 @@ function draw() {
       }else if(solveAlg == "GBFirst") {
         fim.highlight();
         caminho = doGBFirst(inicio,fim);
-		mostrarCaminho(caminho);
+		    mostrarCaminho(caminho);
       }
     }
   }

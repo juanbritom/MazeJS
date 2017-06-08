@@ -7,16 +7,22 @@
     <script src="libraries/p5.js" type="text/javascript"></script>
     <script src="libraries/p5.dom.js" type="text/javascript"></script>
     <script src="libraries/dat.gui.min.js" type="text/javascript"></script>
+    <script src="libraries/underscore-min.js" type="text/javascript"></script>
     <script type = "text/javascript">
 
-    var w = 35; //tamanho da cell, wid*hei deve ser divisivel por w² (já tratado)
+    var w = 6; //tamanho da cell, wid*hei deve ser divisivel por w² (já tratado)
     var wid = 600;
     var hei = 600;
+    var isThereACanvas = false; //true ou false se há a necessidade de mostrar canvas(false para testes de métrica)
     var status = "create"; //create,solve
-    var mode = "Anim";  //Anim,NoAnim
-    var createAlg = "DFS"; //Prim,DFS,Aldous
-    var solveAlg = "AStar"; //AStar, BFS, GBFirst. Caso queira apenas criar, utilizar um valor diferente dos listados
-    var AStarHeuristic = "Euclidean"; //Euclidean, Manhattan
+    var timesToCreate = 100; //0 = cria uma vez e resolve uma vez; 1 - cria duas vezes e resolve o ultimo; n - cria n+1 vezes => útil para métricas de criação.
+    var solveMetrics = true; //true ou false pra habilitar solve metrics (para cada labirinto rodar os três algoritmos de solução)
+    //caso timesToCreate e/ou solveMetrics for >0 ou/e true, interessante desligar animações e Canvas (funções utilizadas para métricas).
+    var mode = "NoAnim";  //Anim,NoAnim
+    var createAlg = "Prim"; //Prim,DFS,Aldous
+    var solveAlg = "GBFirst"; //AStar, BFS, GBFirst. Caso queira apenas criar, utilizar um valor diferente dos listados
+    var AStarHeuristic = "Euclidian"; //Euclidean, Manhattan, mesma heuristica do GBFirst
+    //cores iniciais
     var colorBackground = [255,255,255,255];
   	var colorWalls = [0,0,0,255];
   	var colorPath = [0,0,30,200];

@@ -1,5 +1,8 @@
 //lul
 function createCells() {
+  if(grid.length>0){
+    grid = [];
+  }
   for (var j=0; j < rows; j++) {
     for (var i=0; i < cols; i++) {
       var cell = new Cell(i, j);
@@ -15,6 +18,61 @@ function inArray(target, array) {
     }
   }
   return false;
+}
+
+function creationMetrics(){
+  var i,j,cr,de,ce = grid.length; //j = junctions, cr = crossroads, de = deadends
+  //3 paredes derrubadas = junction
+  for(i=0, j=0, cr=0, de=0;i<ce;i++){
+    if(_.isEqual(grid[i].walls,[true,false,false,false]) || _.isEqual(grid[i].walls,[false,true,false,false]) || _.isEqual(grid[i].walls,[false,false,true,false]) || _.isEqual(grid[i].walls,[false,false,false,true])){
+      j++;
+    }else if(_.isEqual(grid[i].walls,[false,false,false,false])){ //4 paredes derrubadas = crossroad
+      cr++;
+      //3 paredes levantadas = deadend
+    }else if(_.isEqual(grid[i].walls,[true,true,true,false]) || _.isEqual(grid[i].walls,[true,true,false,true]) || _.isEqual(grid[i].walls,[true,false,true,true]) || _.isEqual(grid[i].walls,[false,true,true,true])){
+      de++;
+    }
+  }
+  //retorna porcentagem
+  var xd = j/ce+";"+cr/ce+";"+de/ce+"\n";
+  return xd;
+}
+
+function singleSolvingMetrics(){
+  var i,s = caminho.length,v,ce = grid.length; //s = tamanho da solução (caminho), v = vizinhos visitados
+  for (i=0,v=0;i<grid.length;i++){
+    if(grid[i].visitedSolve){
+      v++;
+      grid[i].visitedSolve = false;
+    }
+  }
+  var xd = s+";"+v/ce;
+  return xd; //tamanho da solução e porcentagem de vizinhos percorridos
+}
+
+function completeSolvingMetrics(){
+  var stringSolve = "";
+  noLoop();
+  current = grid[0];
+  status = "solve";
+  solveAlg = "AStar";
+  fts = true;
+  caminho = [];
+  draw();
+  stringSolve +=singleSolvingMetrics();
+  current = grid[0];
+  solveAlg = "BFS";
+  fts = true;
+  caminho = [];
+  draw();
+  stringSolve +=";"+singleSolvingMetrics();
+  current = grid[0];
+  solveAlg = "GBFirst";
+  fts = true;
+  caminho = [];
+  draw();
+  stringSolve +=";"+singleSolvingMetrics()+"\n";
+  return stringSolve;
 }
 
 //retorna o index do grid (1-dimensional array)
@@ -47,42 +105,44 @@ function removeWalls(a, b) {
 }
 
 function doGBFirst(inicio,fim){
-        fim.highlight();
-        while (openSet.length>0){
-          idxMenorOpenSetScore = menorhScore(openSet);
-          inicio = openSet[idxMenorOpenSetScore];
-          //inicio.partOffrontier = true;
-          if(inicio == fim){
-            caminho = recon_path(inicio);
-            return caminho;
-          }
-          mostrarCaminho(recon_path(inicio));
-          closedSet.push(inicio);
-          openSet.splice(idxMenorOpenSetScore,1);
-          var kinjins = inicio.retornaTodosVizinhos();
-          for (i = 0; i<kinjins.length; i++) {
-            if (inicio == fim || inArray(kinjins[i],closedSet) || !isMovePossible(inicio,kinjins[i])){
-              continue;
-            }
-            kinjins[i].highlightPossible();
-            var hScore = inicio.aStarHValue;
-            var hScoreIsBest = false;
-            if(!inArray(kinjins[i],openSet) && hScore < kinjins[i].aStarHValue){
-              hScoreIsBest = true;
-              kinjins[i].aStarHValue = HUEristic(kinjins[i],fim);
-              openSet.push(kinjins[i]);
-            }
-            // else if(hScore < kinjins[i].aStarHValue) {
-            //   hScoreIsBest = true;
-            // }
-            if(hScoreIsBest) {
-              kinjins[i].partOffrontier = true;
-              kinjins[i].pai = inicio;
-              kinjins[i].aStarHValue = hScore;
-              kinjins[i].attFValueGBS();
-            }
-          }
-        }
+  fim.highlight();
+  var openSet = [inicio];
+  var closedSet = [];
+  inicio.aStarHValue = HUEristic(inicio,fim);
+  inicio.aStarFValue = HUEristic(inicio,fim);
+  while (openSet.length>0){
+    idxMenorOpenSetScore = menorhScore(openSet);
+    inicio = openSet[idxMenorOpenSetScore];
+    inicio.visitedSolve = true;
+    //inicio.partOffrontier = true;
+    if(inicio == fim){
+      var way = recon_path(inicio);
+      return way;
+    }
+    closedSet.push(inicio);
+    openSet.splice(idxMenorOpenSetScore,1);
+    var kinjins = inicio.retornaTodosVizinhos();
+    for (i = 0; i<kinjins.length; i++) {
+      if (inArray(kinjins[i],closedSet) || !isMovePossible(inicio,kinjins[i])){
+        continue;
+      }
+      var hScore = inicio.aStarHValue;
+      var hScoreIsBest = false;
+      if(!inArray(kinjins[i],openSet)){
+        hScoreIsBest = true;
+        kinjins[i].aStarHValue = HUEristic(kinjins[i],fim);
+        openSet.push(kinjins[i]);
+      }
+      else if(hScore < kinjins[i].aStarHValue) {
+        hScoreIsBest = true;
+      }
+      if(hScoreIsBest) {
+        kinjins[i].pai = inicio;
+        kinjins[i].aStarHValue = hScore;
+        kinjins[i].attFValueGBS();
+      }
+    }
+  }
 }
 
 function AEstrela(inicio,fim) {
@@ -93,6 +153,7 @@ function AEstrela(inicio,fim) {
   while (openSet.length>0){
     idxMenorOpenSetScore = menorfScore(openSet);
     inicio = openSet[idxMenorOpenSetScore];
+    inicio.visitedSolve = true;
     //inicio.partOffrontier = true;
     if(inicio == fim){
       return recon_path(inicio);
@@ -205,7 +266,6 @@ function disVisitdisFrontier(set){
 }
 //courses.cs.washington.edu/courses/cse326/03su/homework/hw3/bfs.html
 function doBFS(inicio,fim){
-  disVisitdisFrontier(grid);
   var filinha = [inicio];
   fim.highlight();
   while(filinha.length>0){
