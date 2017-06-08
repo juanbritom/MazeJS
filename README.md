@@ -29,3 +29,5 @@ solveAlg: Define o algoritmo que será usado para resolução do labirinto
 AStarHeuristic: Define a heurística que será usada para os algoritmos que utilizam heurísticas (apesar do nome de variável indicar AStar)
 
 varíaveis color: Podem ser ajustadas como o valor inicial de cada elemento do labirinto (vetor [R,G,B,Transparência]). As variáveis também podem ser editadas através dos controles na interface, embora não sejam salvos para próximas iterações.
+
+Os códigos fontes também podem ser encontrados em https://github.com/juanbritom/MazeJS
